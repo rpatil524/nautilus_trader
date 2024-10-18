@@ -12,6 +12,7 @@ Released on TBD (UTC).
 - Added in the money probability field to GreeksData (#1995), thanks @faysou
 - Added `on_signal(signal)` handler for custom signal data
 - Improved usability of `OrderBookDepth10` by filling partial levels with null orders and zero counts
+- Improve Postgres config (#2010), thanks @filipmacek
 - Refined `DatabentoInstrumentProvider` handling of large bulks of instrument definitions (improved parent symbol support)
 - Standardized Betfair symbology to use hyphens instead of periods (prevents Betfair symbols being treated as composite)
 - Integration guide docs fixes (#1991), thanks @FarukhS52
@@ -24,12 +25,13 @@ Released on TBD (UTC).
 - Use Rust rate limiter for dYdX websockets (#1996, #1999), thanks @davidsblom
 - Improved error logs for dYdX websocket subscriptions (#1993), thanks @davidsblom
 - Standardized log and error message syntax in Rust
-- Continue porting `SimulatedExchange` to Rust (#1997, #1998, #2001, #2003, #2004, #2006, #2007, #2009), thanks @filipmacek
+- Continue porting `SimulatedExchange` and `OrderMatchingEngine` to Rust (#1997, #1998, #2001, #2003, #2004, #2006, #2007, #2009, #2014), thanks @filipmacek
 
 ### Breaking Changes
 - Removed legacy `TardisQuoteDataLoader` (now redundant with new Rust implemented loader)
 - Removed legacy `TardisTradeDataLoader` (now redundant with new Rust implemented loader)
 - Custom signals are now passed to `on_signal(signal)` instead of `on_data(data)`
+- Changed `BettingInstrument` Arrow schema fields `event_open_date` and `market_start_time` from `string` to `uint64`
 
 ### Fixes
 - Fixed `SocketClient` TLS implementation
@@ -39,6 +41,7 @@ Released on TBD (UTC).
 - Fixed check for `OmsType` in `OrderMatchingEngine` position ID processing (#2003), thanks @filipmacek
 - Fixed `TardisCSVDataLoader` snapshot5 and snapshot25 parsing (#2005), thanks @Pushkarm029
 - Fixed Binance clients venue assignment, we should use the `client_id` params (which match the custom client `name`) to communicate with the clients, and use the same `'BINANCE'` venue identifiers
+- Fixed `OrderMatchingEngine` incorrectly attempting to process monthly bars for execution (which will fail, as no reasonable `timedelta` is available)
 
 ---
 

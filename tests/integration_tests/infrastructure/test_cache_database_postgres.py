@@ -108,11 +108,11 @@ class TestCachePostgresAdapter:
 
     def teardown(self):
         self.database.flush()
+        self.database.dispose()
 
     ################################################################################
     # General
     ################################################################################
-
     @pytest.mark.asyncio
     async def test_load_general_objects_when_nothing_in_cache_returns_empty_dict(self):
         # Arrange, Act
@@ -161,6 +161,30 @@ class TestCachePostgresAdapter:
 
         currencies = self.database.load_currencies()
         assert list(currencies.keys()) == ["BTC"]
+
+    ################################################################################
+    # Instrument - Binary Option
+    ################################################################################
+    @pytest.mark.skip(reason="WIP")
+    @pytest.mark.asyncio
+    async def test_add_instrument_binary_option(self):
+        binary_option = TestInstrumentProvider.binary_option()
+        self.database.add_currency(binary_option.quote_currency)
+
+        # Check that we have added target currencies, because of foreign key constraints
+        await eventually(lambda: self.database.load_currencies())
+
+        currencies = self.database.load_currencies()
+        assert list(currencies.keys()) == ["USDC"]
+
+        # add instrument
+        self.database.add_instrument(binary_option)
+
+        # Allow MPSC thread to insert
+        await eventually(lambda: self.database.load_instrument(binary_option.id))
+
+        # Assert
+        assert binary_option == self.database.load_instrument(binary_option.id)
 
     ################################################################################
     # Instrument - Crypto Future
@@ -218,7 +242,6 @@ class TestCachePostgresAdapter:
     ################################################################################
     # Instrument - Currency Pair
     ################################################################################
-
     @pytest.mark.asyncio
     async def test_add_instrument_currency_pair(self):
         self.database.add_currency(_AUDUSD_SIM.base_currency)
@@ -282,7 +305,6 @@ class TestCachePostgresAdapter:
     ################################################################################
     # Instrument - Equity
     ################################################################################
-
     @pytest.mark.asyncio
     async def test_add_instrument_equity(self):
         appl_equity = TestInstrumentProvider.equity()
