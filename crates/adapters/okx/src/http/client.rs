@@ -16,9 +16,8 @@
 //! Provides an ergonomic wrapper around the **OKX v5 REST API** –
 //! <https://www.okx.com/docs-v5/en/>.
 //!
-//! The core type exported by this module is [`OKXHttpClient`].  It offers a
-//! *strongly-typed* interface to all exchange endpoints currently required by
-//! NautilusTrader.
+//! The core type exported by this module is [`OKXHttpClient`].  It offers an
+//! interface to all exchange endpoints currently required by NautilusTrader.
 //!
 //! Key responsibilities handled internally:
 //! • Request signing and header composition for private routes (HMAC-SHA256).
@@ -293,16 +292,14 @@ impl OKXHttpInnerClient {
             None => return Err(OKXHttpError::MissingCredentials),
         };
 
-        let body_str = body
-            .and_then(|b| String::from_utf8(b.to_vec()).ok())
-            .unwrap_or_default();
+        let body_str = body.and_then(|b| std::str::from_utf8(b).ok()).unwrap_or("");
 
         tracing::debug!("{method} {path}");
 
-        let api_key = credential.api_key.clone().to_string();
-        let api_passphrase = credential.api_passphrase.clone();
+        let api_key = credential.api_key.to_string();
+        let api_passphrase = credential.api_passphrase.to_string();
         let timestamp = Utc::now().format("%Y-%m-%dT%H:%M:%S.%3fZ").to_string();
-        let signature = credential.sign(&timestamp, method.as_str(), path, &body_str);
+        let signature = credential.sign(&timestamp, method.as_str(), path, body_str);
 
         let mut headers = HashMap::new();
         headers.insert("OK-ACCESS-KEY".to_string(), api_key);
@@ -336,7 +333,7 @@ impl OKXHttpInnerClient {
         authenticate: bool,
     ) -> Result<Vec<T>, OKXHttpError> {
         let url = format!("{}{path}", self.base_url);
-        let endpoint = path.to_string();
+        let endpoint = path;
         let method_clone = method.clone();
         let body_clone = body.clone();
 
@@ -344,11 +341,10 @@ impl OKXHttpInnerClient {
             let url = url.clone();
             let method = method_clone.clone();
             let body = body_clone.clone();
-            let endpoint = endpoint.clone();
 
             async move {
                 let mut headers = if authenticate {
-                    self.sign_request(&method, &endpoint, body.as_deref())?
+                    self.sign_request(&method, endpoint, body.as_deref())?
                 } else {
                     HashMap::new()
                 };
@@ -431,7 +427,7 @@ impl OKXHttpInnerClient {
 
         self.retry_manager
             .execute_with_retry_with_cancel(
-                &endpoint,
+                endpoint,
                 operation,
                 should_retry,
                 create_error,

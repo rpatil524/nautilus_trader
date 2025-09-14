@@ -11,13 +11,15 @@ Released on TBD (UTC).
 None
 
 ### Internal Improvements
-- Implemented HTTP client for Hyperliquid adapter (#2939), thanks @nicolad
+- Implemented Hyperliquid adapter HTTP client (#2939), thanks @nicolad
+- Implemented Hyperliquid adapter scaffolding and examples (#2957), thanks @nicolad
 - Refined Bybit balance parsing to use `Money.from_str` to ensure no rounding errors
 - Upgraded `pyo3` and `pyo3-async-runtimes` crates to v0.26.0
 
 ### Fixes
 - Fixed `on_load` called before strategy added bug (#2953), thanks @lisiyuan656
 - Fixed filesystem usage in catalog for `isfile` and `isdir` (#2954), thanks @limx0
+- Fixed Polymarket handling of one-sided quotes (#2950), thanks for reporting @thefabus
 
 ### Documentation Updates
 None
@@ -878,7 +880,7 @@ This release introduces [uv](https://docs.astral.sh/uv) as the Python project an
 - Fixed memory allocation performance issue for `TardisCSVDataLoader`
 - Fixed `effective` timestamp filtering for `TardisHttpClient` to now only retain latest version at or before `effective`
 - Fixed contract `activation` for Binance Futures, now based on the `onboardDate` field
-- Fixed hard-coded signature type for `PolymarketExecutionClient`
+- Fixed hardcoded signature type for `PolymarketExecutionClient`
 - Fixed unsubscribing from quotes for dYdX (#2331), thanks @davidsblom
 - Fixed docstrings for dYdX factories (#2415), thanks @davidsblom
 - Fixed incorrect type annotations in `_request_instrument` signature (#2332), thanks @faysou
@@ -2409,7 +2411,7 @@ Released on 31st July 2023 (UTC).
 - Fixed Binance reconciliation which was requesting reports for the same symbol multiple times
 - Fixed Binance Futures native symbol parsing (was actually Nautilus symbol values)
 - Fixed Binance Futures `PositionStatusReport` parsing of position side
-- Fixed Binance Futures `TradeReport` assignment of position ID (was hard-coded to hedging mode)
+- Fixed Binance Futures `TradeReport` assignment of position ID (was hardcoded to hedging mode)
 - Fixed Binance execution submitting of order lists
 - Fixed Binance commission rates requests for `InstrumentProvider`
 - Fixed Binance `TriggerType` parsing #1154, thanks for reporting @davidblom603
