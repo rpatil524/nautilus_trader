@@ -20,13 +20,17 @@ Released on TBD (UTC).
 - Improved cache order query benchmark coverage
 - Optimized cache order queries and exchange-rate lookups from bars
 - Optimized average-price calculation for orders with many fills
-- Upgraded `datafusion` crates to v55.1.0
+- Optimized allocation overhead in Rust cache `orders` and `orders_refs` queries
+- Upgraded `datafusion` crate to v55.1.0
+- Upgraded `jiff` crate to v0.2.37
 - Upgraded `smallvec` crate to v1.16.1
 - Upgraded `ty` package (dev) to v0.0.79
 
 ### Documentation Updates
 
 ### Deprecations
+
+- Deprecated BitMEX adapter due to exchange decommissioning; 2.0.0rc6 is the last release with support (#4552)
 
 ---
 
